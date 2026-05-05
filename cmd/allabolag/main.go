@@ -27,7 +27,7 @@ func main() {
 	scraper := scrape.NewAllaBolagScraper()
 
 	if *personMode {
-		runPersonSearch(scraper, query)
+		runPersonSearch(scraper, query, *asJSON)
 		return
 	}
 	run(scraper, query, *terse, *asJSON)
@@ -56,10 +56,14 @@ func getCompanies(s scrape.CompanyInfoScraper, query string) []scrape.Company {
 	return companies
 }
 
-func runPersonSearch(s scrape.CompanyInfoScraper, query string) {
+func runPersonSearch(s scrape.CompanyInfoScraper, query string, asJSON bool) {
 	persons, _ := s.SearchPersons(query)
 	if len(persons) == 0 {
 		output.PrintNoResult(query)
+		return
+	}
+	if asJSON {
+		output.PrintPersonResultsJSON(persons)
 		return
 	}
 	output.PrintPersonResults(persons)

@@ -44,6 +44,13 @@ func PrintJSON(c scrape.CompanyDetails) {
 	enc.Encode(c)
 }
 
+// PrintPersonResultsJSON outputs person results as JSON.
+func PrintPersonResultsJSON(persons []scrape.PersonResult) {
+	enc := json.NewEncoder(os.Stdout)
+	enc.SetIndent("", "  ")
+	enc.Encode(persons)
+}
+
 // PrintPersonResults outputs a list of persons and their business associations.
 func PrintPersonResults(persons []scrape.PersonResult) {
 	for i, p := range persons {
