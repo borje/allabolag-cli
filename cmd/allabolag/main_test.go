@@ -23,6 +23,6 @@ func TestNoCompanyResultsReturnsNoError(t *testing.T) {
 	emptyDetailsFunc := func(c scrape.Company) (*scrape.CompanyDetails, error) { return nil, nil }
 	s := MockScraper{SearchFunc: noResultSearchFunc, DetailsFunc: emptyDetailsFunc}
 
-	runFunc := func() { run(s, "anything with no results", false) }
+	runFunc := func() { run(s, "anything with no results", false, false) }
 	assert.NotPanics(t, runFunc)
 }

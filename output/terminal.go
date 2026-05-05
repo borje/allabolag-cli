@@ -1,6 +1,7 @@
 package output
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 	"text/tabwriter"
@@ -22,16 +23,40 @@ func PrintTerse(c scrape.CompanyDetails) {
 // PrintSummary outputs company details in a summary format to the terminal.
 func PrintSummary(c scrape.CompanyDetails) {
 	fmt.Printf("%s\n", c.Company.Name)
+	if c.Company.Location != "" {
+		fmt.Printf("%s\n", c.Company.Location)
+	}
 	fmt.Printf("%s\n", c.Company.Link)
+	if len(c.Roles) > 0 {
+		fmt.Println("--------------------")
+		printRolesTable(c.Roles)
+	}
 	if len(c.FiscalDetails) > 0 {
 		fmt.Println("--------------------")
 		printFiscalTable(c.FiscalDetails)
 	}
 }
 
+// PrintJSON outputs company details as JSON.
+func PrintJSON(c scrape.CompanyDetails) {
+	enc := json.NewEncoder(os.Stdout)
+	enc.SetIndent("", "  ")
+	enc.Encode(c)
+}
+
 // PrintNoResult outputs a string for when there's no results..
 func PrintNoResult(t string) {
 	fmt.Printf("No result found for search term %s\n", t)
+}
+
+// printRolesTable renders tabular role data to the terminal.
+func printRolesTable(roles []scrape.Role) {
+	w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+	fmt.Fprintln(w, "Name\tTitle\tGroup")
+	for _, r := range roles {
+		fmt.Fprintf(w, "%s\t%s\t%s\n", r.Name, r.Title, r.Group)
+	}
+	w.Flush()
 }
 
 // printFiscalTable renders tabular financial data to the terminal.
