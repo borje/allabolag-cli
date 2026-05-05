@@ -44,6 +44,23 @@ func PrintJSON(c scrape.CompanyDetails) {
 	enc.Encode(c)
 }
 
+// PrintPersonResults outputs a list of persons and their business associations.
+func PrintPersonResults(persons []scrape.PersonResult) {
+	for i, p := range persons {
+		if i > 0 {
+			fmt.Println()
+		}
+		if p.Location != "" {
+			fmt.Printf("%s (%d år) - %s\n", p.Name, p.Age, p.Location)
+		} else {
+			fmt.Printf("%s (%d år)\n", p.Name, p.Age)
+		}
+		for _, b := range p.Businesses {
+			fmt.Printf("  %-40s %s  %s\n", b.Name, b.Orgnr, b.Role)
+		}
+	}
+}
+
 // PrintNoResult outputs a string for when there's no results..
 func PrintNoResult(t string) {
 	fmt.Printf("No result found for search term %s\n", t)

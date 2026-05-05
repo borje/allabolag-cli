@@ -16,6 +16,8 @@ type AllaBolagScraper struct{}
 
 const (
 	searchURL       = "https://www.allabolag.se/bransch-sök?q=%s"
+	personSearchURL = "https://www.allabolag.se/befattningshavare?q=%s"
+	personDetailURL = "https://www.allabolag.se/_next/data/%s/role/%s.json"
 	maxYearsToFetch = 5
 )
 
@@ -72,6 +74,35 @@ type nextDataCompanyPage struct {
 	} `json:"props"`
 }
 
+type nextDataPersonSearch struct {
+	BuildId string `json:"buildId"`
+	Props   struct {
+		PageProps struct {
+			RolePersons struct {
+				BusinessPersons []struct {
+					Name     string `json:"name"`
+					PersonId string `json:"personId"`
+					Age      int    `json:"age"`
+				} `json:"businessPersons"`
+			} `json:"rolePersons"`
+		} `json:"pageProps"`
+	} `json:"props"`
+}
+
+type nextDataRolePerson struct {
+	PageProps struct {
+		RolePerson struct {
+			Location *string `json:"location"`
+			Roles    []struct {
+				Id   string `json:"id"`
+				Role string `json:"role"`
+				Name string `json:"name"`
+				Type string `json:"type"`
+			} `json:"roles"`
+		} `json:"rolePerson"`
+	} `json:"pageProps"`
+}
+
 func browserHeaders(r *colly.Request) {
 	r.Headers.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36")
 	r.Headers.Set("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
@@ -121,6 +152,71 @@ func (s *AllaBolagScraper) Search(term string) ([]Company, error) {
 		companies = append(companies, Company{Name: nc.Name, Link: link, Location: nc.Location.Municipality})
 	}
 	return companies, nil
+}
+
+// SearchPersons searches for persons by name and returns their business associations.
+func (s *AllaBolagScraper) SearchPersons(term string) ([]PersonResult, error) {
+	c := colly.NewCollector()
+	c.OnRequest(browserHeaders)
+
+	var nd nextDataPersonSearch
+	c.OnHTML("script#__NEXT_DATA__", func(e *colly.HTMLElement) {
+		json.Unmarshal([]byte(e.Text), &nd)
+	})
+	_ = c.Visit(fmt.Sprintf(personSearchURL, url.QueryEscape(term)))
+
+	if nd.BuildId == "" {
+		return nil, errors.New("could not determine build ID")
+	}
+
+	persons := []PersonResult{}
+	for _, bp := range nd.Props.PageProps.RolePersons.BusinessPersons {
+		nameSlug := strings.ToLower(strings.ReplaceAll(bp.Name, " ", "-"))
+		params := url.Values{
+			"roleId":   {bp.PersonId},
+			"name":     {nameSlug},
+			"location": {"-"},
+		}
+		detailURL := fmt.Sprintf(personDetailURL, nd.BuildId, bp.PersonId) + "?" + params.Encode()
+
+		dc := colly.NewCollector()
+		dc.OnRequest(func(r *colly.Request) {
+			r.Headers.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36")
+			r.Headers.Set("Accept", "application/json")
+			r.Headers.Set("Cookie", "i18next=sv")
+		})
+
+		var rnd nextDataRolePerson
+		dc.OnResponse(func(r *colly.Response) {
+			json.Unmarshal(r.Body, &rnd)
+		})
+		_ = dc.Visit(detailURL)
+
+		businesses := []Business{}
+		for _, role := range rnd.PageProps.RolePerson.Roles {
+			if role.Type != "Company" {
+				continue
+			}
+			businesses = append(businesses, Business{
+				Name:  role.Name,
+				Orgnr: role.Id,
+				Role:  role.Role,
+			})
+		}
+
+		location := ""
+		if rnd.PageProps.RolePerson.Location != nil {
+			location = *rnd.PageProps.RolePerson.Location
+		}
+
+		persons = append(persons, PersonResult{
+			Name:       bp.Name,
+			Age:        bp.Age,
+			Location:   location,
+			Businesses: businesses,
+		})
+	}
+	return persons, nil
 }
 
 // Details returns details about a specific company.

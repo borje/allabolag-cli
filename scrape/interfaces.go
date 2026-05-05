@@ -3,7 +3,23 @@ package scrape
 // CompanyInfoScraper represents a generic scraper of company information.
 type CompanyInfoScraper interface {
 	Search(term string) ([]Company, error)
+	SearchPersons(term string) ([]PersonResult, error)
 	Details(c Company) (*CompanyDetails, error)
+}
+
+// PersonResult represents a person and their associated business activities.
+type PersonResult struct {
+	Name       string
+	Age        int
+	Location   string
+	Businesses []Business
+}
+
+// Business represents a company a person has a role in.
+type Business struct {
+	Name  string
+	Orgnr string
+	Role  string
 }
 
 // Company represents a company.

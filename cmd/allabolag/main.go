@@ -14,6 +14,7 @@ func main() {
 	// Parse flags
 	terse := flag.Bool("t", false, "print company information in terse form")
 	asJSON := flag.Bool("json", false, "print company information as JSON")
+	personMode := flag.Bool("p", false, "search for persons and their company associations")
 	flag.Parse()
 
 	// Search term is a required argument
@@ -25,6 +26,10 @@ func main() {
 	query := flag.Arg(0)
 	scraper := scrape.NewAllaBolagScraper()
 
+	if *personMode {
+		runPersonSearch(scraper, query)
+		return
+	}
 	run(scraper, query, *terse, *asJSON)
 }
 
@@ -49,6 +54,15 @@ func getCompanies(s scrape.CompanyInfoScraper, query string) []scrape.Company {
 	// TODO: Handle parsing failure
 
 	return companies
+}
+
+func runPersonSearch(s scrape.CompanyInfoScraper, query string) {
+	persons, _ := s.SearchPersons(query)
+	if len(persons) == 0 {
+		output.PrintNoResult(query)
+		return
+	}
+	output.PrintPersonResults(persons)
 }
 
 func getDetails(s scrape.CompanyInfoScraper, company scrape.Company) *scrape.CompanyDetails {
