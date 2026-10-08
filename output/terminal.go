@@ -13,6 +13,9 @@ import (
 func PrintTerse(c scrape.CompanyDetails) {
 	fmt.Printf("%s\n", c.Company.Name)
 	fmt.Printf("%s\n", c.Company.Link)
+	if c.Purpose != "" {
+		fmt.Printf("%s\n", c.Purpose)
+	}
 
 	if len(c.FiscalDetails) > 0 {
 		fmt.Printf("Revenue (%d): %dk\n", c.FiscalDetails[0].Year, c.FiscalDetails[0].Revenue)
