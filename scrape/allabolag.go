@@ -53,6 +53,7 @@ type nextDataCompanyPage struct {
 	Props struct {
 		PageProps struct {
 			Company struct {
+				Purpose         string `json:"purpose"`
 				CompanyAccounts []struct {
 					Year     string `json:"year"`
 					Accounts []struct {
@@ -267,7 +268,7 @@ func (s *AllaBolagScraper) Details(comp Company) (*CompanyDetails, error) {
 		}
 	}
 
-	return &CompanyDetails{Company: comp, Roles: roles, FiscalDetails: fiscalDetails}, nil
+	return &CompanyDetails{Company: comp, Purpose: nd.Props.PageProps.Company.Purpose, Roles: roles, FiscalDetails: fiscalDetails}, nil
 }
 
 // NewAllaBolagScraper returns a new AllaBolagScraper

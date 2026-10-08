@@ -32,6 +32,7 @@ type Company struct {
 // CompanyDetails represents further details about a company.
 type CompanyDetails struct {
 	Company
+	Purpose       string
 	Roles         []Role
 	FiscalDetails []FiscalDetails
 }

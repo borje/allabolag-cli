@@ -27,6 +27,10 @@ func PrintSummary(c scrape.CompanyDetails) {
 		fmt.Printf("%s\n", c.Company.Location)
 	}
 	fmt.Printf("%s\n", c.Company.Link)
+	if c.Purpose != "" {
+		fmt.Println("--------------------")
+		fmt.Println(c.Purpose)
+	}
 	if len(c.Roles) > 0 {
 		fmt.Println("--------------------")
 		printRolesTable(c.Roles)
