@@ -6,7 +6,7 @@ import (
 	"os"
 	"text/tabwriter"
 
-	"github.com/vertan/allabolag-cli/scrape"
+	"github.com/borje/allabolag-cli/scrape"
 )
 
 // PrintTerse outputs company details in a terse format to the terminal.

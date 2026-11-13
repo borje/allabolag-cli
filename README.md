@@ -1,7 +1,7 @@
 # allabolag-cli
-![Test status](https://github.com/vertan/allabolag-cli/workflows/Tests/badge.svg)
-[![Go Report Card](https://goreportcard.com/badge/github.com/vertan/allabolag-cli)](https://goreportcard.com/report/github.com/vertan/allabolag-cli)
-![Current release](https://img.shields.io/github/v/release/vertan/allabolag-cli?sort=semver)
+![Test status](https://github.com/borje/allabolag-cli/workflows/Tests/badge.svg)
+[![Go Report Card](https://goreportcard.com/badge/github.com/borje/allabolag-cli)](https://goreportcard.com/report/github.com/borje/allabolag-cli)
+![Current release](https://img.shields.io/github/v/release/borje/allabolag-cli?sort=semver)
 
 A simple CLI tool written in Go to get information from the site allabolag.se, which serves information about Swedish companies.
 
@@ -13,12 +13,12 @@ A simple CLI tool written in Go to get information from the site allabolag.se, w
 ## Installation
 The simplest way, if you are a Go developer, is to install it directly to $GOBIN:
 ```bash
-$ go install github.com/vertan/allabolag-cli/cmd/allabolag
+$ go install github.com/borje/allabolag-cli/cmd/allabolag
 ```
 
 Or, you can download one of the binary distributions from the releases page on Github (make sure to pick the right binary for your system):
 ```bash
-$ wget https://github.com/vertan/allabolag-cli/releases/download/v0.2.3/allabolag-v0.2.3-darwin-amd64.tar.gz
+$ wget https://github.com/borje/allabolag-cli/releases/download/v0.2.3/allabolag-v0.2.3-darwin-amd64.tar.gz
 $ tar -xzvf allabolag-v0.2.3-darwin-amd64.tar.gz /usr/bin/local
 ```
 

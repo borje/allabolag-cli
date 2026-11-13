@@ -4,8 +4,8 @@ import (
 	"flag"
 	"log"
 
-	"github.com/vertan/allabolag-cli/output"
-	"github.com/vertan/allabolag-cli/scrape"
+	"github.com/borje/allabolag-cli/output"
+	"github.com/borje/allabolag-cli/scrape"
 )
 
 const minPositionalArgs = 1

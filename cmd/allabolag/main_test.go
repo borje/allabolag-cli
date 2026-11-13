@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/vertan/allabolag-cli/scrape"
+	"github.com/borje/allabolag-cli/scrape"
 )
 
 // TODO: Move out to mock package?

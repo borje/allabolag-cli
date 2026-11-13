@@ -1,4 +1,4 @@
-module github.com/vertan/allabolag-cli
+module github.com/borje/allabolag-cli
 
 go 1.13
 
